@@ -2,14 +2,14 @@ use wasm_bindgen::prelude::*;
 
 fn zeros(size: usize) -> Vec<u8> {
     let mut zero_vec: Vec<u8> = Vec::with_capacity(size as usize);
-    for i in 0..size {
+    for _i in 0..size {
         zero_vec.push(0);
     }
     return zero_vec;
 }
 
 #[wasm_bindgen]
-pub fn createImageBuffer(width: u32, height: u32,channels:u32) -> *const u8 {
+pub fn create_image_buffer(width: u32, height: u32,channels:u32) -> *const u8 {
     let size = (width*height*channels) as usize;
     return zeros(size).as_ptr();
 }
