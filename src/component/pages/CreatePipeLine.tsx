@@ -18,9 +18,9 @@ const PipeLine = styled.ul`
 `
 
 export const CreatePipeLine:React.FC = () => {
-    const [steps,setStep] = useState<Segment[]>([{id:0,component:CameraInput.Component,method:null,options:[]}])
-    const [images,setImage] = useState<ImageData[]>([new ImageData(100,100)])
-    const [update,setUpdate] = useState<number[]>([0])
+    const [steps,setStep] = useState<Segment[]>([])
+    const [images,setImage] = useState<ImageData[]>([])
+    const [update,setUpdate] = useState<number[]>([])
     const renders:JSX.Element[] = []
 
     const UpdateImage:(index:number,image:ImageData)=>void = (index,image)=>{
@@ -52,7 +52,12 @@ export const CreatePipeLine:React.FC = () => {
             case 'grayscale':
                 nowStep.push({id:newID,component:GrayScale.Component,method:GrayScale.Process,options:[]})
                 break;
-        
+            case 'camera':
+                nowStep.push({id:newID,component:CameraInput.Component,method:null,options:[]})
+                break;
+            case 'image':
+                nowStep.push({id:newID,component:ImageInput.Component,method:null,options:[]});
+                break;
             default:
                 break;
         }
@@ -70,6 +75,8 @@ export const CreatePipeLine:React.FC = () => {
             <PipeLine>
                 {renders}
             </PipeLine>
+            <button onClick={()=>{AddComponent('image')}}>画像入力</button>
+            <button onClick={()=>{AddComponent('camera')}}>カメラ入力</button>
             <button onClick={()=>{AddComponent('grayscale')}}>グレースケール変換</button>
         </div>
     )
