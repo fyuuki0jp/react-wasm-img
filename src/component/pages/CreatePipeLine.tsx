@@ -23,29 +23,6 @@ export const CreatePipeLine:React.FC = () => {
     const [update,setUpdate] = useState<number[]>([])
     const renders:JSX.Element[] = []
 
-    const UpdateImage:(index:number,image:ImageData)=>void = (index,image)=>{
-        let img = images
-        img[index] = image
-        for (let idx = index+1; idx < steps.length; idx++) {
-            const element = steps[idx];
-            if(element.method===null)
-                break;
-            img[idx] = element.method(img[idx-1],wasm)
-        }
-        setImage([...img])
-    }
-    if(steps.length > 0){
-        let prev:Segment|undefined = undefined
-        const input = steps[0]
-        renders.push(<input.component output={UpdateImage.bind(null,0)} update={0}/>)
-        prev = input
-        for (let index = 1; index < steps.length; index++) {
-            const element = steps[index];
-            renders.push(<element.component output={UpdateImage.bind(null,index)} input={images[index]} update={update[index]}/>)
-            prev = element
-        }
-    }
-
     const AddComponent:(component:string)=>void = (component)=>{
         const nowStep=steps
         if(steps.length == 0)
@@ -84,6 +61,31 @@ export const CreatePipeLine:React.FC = () => {
             setStep(nowStep)
         }
     }
+    const UpdateImage:(index:number,image:ImageData)=>void = (index,image)=>{
+        let img = images
+        img[index] = image
+        for (let idx = index+1; idx < steps.length; idx++) {
+            const element = steps[idx];
+            if(element.method===null)
+                break;
+            img[idx] = element.method(img[idx-1],wasm)
+        }
+        setImage([...img])
+    }
+    useEffect(()=>{
+        if(steps.length > 0){
+            let prev:Segment|undefined = undefined
+            const input = steps[0]
+            renders.push(<input.component output={UpdateImage.bind(null,0)} update={0}/>)
+            prev = input
+            for (let index = 1; index < steps.length; index++) {
+                const element = steps[index];
+                renders.push(<element.component output={UpdateImage.bind(null,index)} input={images[index]} update={update[index]}/>)
+                prev = element
+            }
+        }
+    },[update])
+
     return (
         <div>
             <h2>画像処理パイプライン作成</h2>
