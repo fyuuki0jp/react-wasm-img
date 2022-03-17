@@ -38,6 +38,6 @@
     "react-webcam": "^7.0.0"
   },
   "scripts": {
-    "deploy":"git subtree push --prefix dist/ origin gh-pages"
+    "deploy":"git subtree push --prefix public/ origin gh-pages"
   }
 }
