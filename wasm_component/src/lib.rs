@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+
 fn zeros(size: usize) -> Vec<u8> {
     let mut zero_vec: Vec<u8> = Vec::with_capacity(size as usize);
     for _i in 0..size {

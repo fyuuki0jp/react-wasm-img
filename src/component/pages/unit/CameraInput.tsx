@@ -1,6 +1,7 @@
 import { SegmentBase,SegmentIF } from "./SegmentBase";
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import {FileOpenButton} from '../../uiparts/AtomDesign'
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
+import * as wasm from '/workspace/wasm_component/pkg'
+import * as wasm_bg from '/workspace/wasm_component/pkg/index_bg.wasm'
 
 export const Component:React.VFC<SegmentIF> = ({output})=>{
     const hiddenVideo = useRef<HTMLVideoElement>(null)
@@ -33,14 +34,14 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
             _canvasUpdate();
 
             function _canvasUpdate() {
-                if(hiddenCanvas.current===null || hiddenVideo.current===null)
+                if(hiddenCanvas.current===null || hiddenVideo.current===null) 
                     return;
                 const back = getContext(hiddenCanvas.current)
                 back.drawImage(hiddenVideo.current, 0, 0, hiddenCanvas.current.width, hiddenCanvas.current.height);
-                const out = back.getImageData(0,0,hiddenCanvas.current.width,hiddenCanvas.current.height)
-                setImage(out)
+                const buffer = back.getImageData(0,0,hiddenCanvas.current.width,hiddenCanvas.current.height)
+                setImage(buffer)
                 if(output!==undefined)
-                    output(out)
+                    output(buffer)
                 requestAnimationFrame(_canvasUpdate);
             };
         });

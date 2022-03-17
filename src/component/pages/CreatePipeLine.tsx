@@ -22,8 +22,9 @@ export const CreatePipeLine:React.FC = () => {
     const [images,setImage] = useState<ImageData[]>([])
     const [update,setUpdate] = useState<number>(0)
     const renders:JSX.Element[] = []
+    const memory = wasm_bg.memory
 
-    const AddComponent:(component:string)=>void = (component)=>{
+    const SetInputComponent:(component:string)=>void = (component)=>{
         const nowStep=steps
         if(steps.length == 0)
         {
@@ -38,41 +39,53 @@ export const CreatePipeLine:React.FC = () => {
                 default:
                     break;
             }
-            const memory = wasm_bg.memory
-            const size = 100*100*4;
-            const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(100,100,4),size)
-            setImage([...images,new ImageData(outbuffer,100)])
+            setImage([...images,new ImageData(100,100)])
             setUpdate(update+1)
             setStep(nowStep)
-        }else{
-            const newID = nowStep[nowStep.length-1].id+1
+        }
+        else{
             switch (component) {
-                case 'grayscale':
-                    nowStep.push({id:newID,component:GrayScale.Component,method:GrayScale.Process,options:[]})
+                case 'camera':
+                    nowStep[0] = {id:0,component:CameraInput.Component,method:null,options:[]}
                     break;
+                case 'image':
+                    nowStep[0] = {id:0,component:ImageInput.Component,method:null,options:[]}
+                    break;
+            
                 default:
                     break;
             }
-            const memory = wasm_bg.memory
-            const size = images[nowStep[nowStep.length-1].id].width*images[nowStep[nowStep.length-1].id].height*4;
-            const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(images[nowStep[nowStep.length-1].id].width,images[nowStep[nowStep.length-1].id].height,4),size)
-            setImage([...images,new ImageData(outbuffer,images[nowStep[nowStep.length-1].id].width)])
             setUpdate(update+1)
             setStep(nowStep)
         }
     }
-    const UpdateImage:(index:number,image:ImageData)=>void = (index,image)=>{
+
+    const AddComponent:(component:string)=>void = (component)=>{
+        const nowStep=steps
+        const newID = nowStep[nowStep.length-1].id+1
+        switch (component) {
+            case 'grayscale':
+                nowStep.push({id:newID,component:GrayScale.Component,method:GrayScale.Process,options:[]})
+                break;
+                default:
+                break;
+        }
+        setUpdate(update+1)
+        setStep(nowStep)
+        UpdateImage(0,images[0])
+    }
+    const UpdateImage:(index:number,image:ImageData)=>void = async (index,image)=>{
         let img = images
         img[index] = image
         for (let idx = index+1; idx < steps.length; idx++) {
             const element = steps[idx];
             if(element.method===null)
                 break;
-            img[idx] = element.method(img[idx-1],wasm)
+            img[idx] = await element.method(img[idx-1],wasm)
         }
         setImage([...img])
     }
-    useEffect(()=>{
+
         if(steps.length > 0){
             let prev:Segment|undefined = undefined
             const input = steps[0]
@@ -84,7 +97,6 @@ export const CreatePipeLine:React.FC = () => {
                 prev = element
             }
         }
-    },[update])
 
     return (
         <div>
@@ -92,8 +104,8 @@ export const CreatePipeLine:React.FC = () => {
             <PipeLine>
                 {renders}
             </PipeLine>
-            <button onClick={()=>{AddComponent('image')}}>画像入力</button>
-            <button onClick={()=>{AddComponent('camera')}}>カメラ入力</button>
+            <button onClick={()=>{SetInputComponent('image')}}>画像入力</button>
+            <button onClick={()=>{SetInputComponent('camera')}}>カメラ入力</button>
             <button onClick={()=>{AddComponent('grayscale')}}>グレースケール変換</button>
         </div>
     )

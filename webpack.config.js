@@ -10,13 +10,10 @@ module.exports = {
     mode: 'development',
     output: {
         //  出力ファイルのディレクトリ名
-        path: `${__dirname}/public`,
+        path: `${__dirname}/dist`,
         // 出力ファイル名
         filename: "index.js"
     },
-    devServer: {
-        contentBase: path.resolve(__dirname, './dist'),
-      },
     module: {
         rules: [
             {
