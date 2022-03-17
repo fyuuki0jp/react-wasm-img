@@ -59,7 +59,7 @@ export const CreatePipeLine:React.FC = () => {
         const memory = wasm_bg.memory
         const size = images[nowStep[nowStep.length-1].id].width*images[nowStep[nowStep.length-1].id].height*4;
 
-        const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.createImageBuffer(images[nowStep[nowStep.length-1].id].width,images[nowStep[nowStep.length-1].id].height,4),size)
+        const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(images[nowStep[nowStep.length-1].id].width,images[nowStep[nowStep.length-1].id].height,4),size)
         setImage([...images,new ImageData(outbuffer,images[nowStep[nowStep.length-1].id].width)])
         setUpdate([...update,0])
         setStep(nowStep)
