@@ -9,13 +9,14 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
     const [image,setImage] = useState<ImageData|undefined>(undefined)
     const [width,setWidth] = useState(640)
     const [height,setHeight] = useState(480)
+    const [stream,setStrream] = useState<MediaStream|null>(null)
     const getContext = (element:HTMLCanvasElement): CanvasRenderingContext2D => {
         const canvas: any = element;
         return canvas.getContext('2d');
     };
 
     const Init = ()=>{
-        let media = navigator.mediaDevices.getUserMedia({
+        navigator.mediaDevices.getUserMedia({
             audio: false,
             video: {
                 width: { ideal: width },
@@ -26,6 +27,7 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
                 setTimeout(Init,100)
                 return;
             }
+            setStrream(stream)
             hiddenCanvas.current.width = width
             hiddenCanvas.current.height = height
             hiddenVideo.current.srcObject = stream;
@@ -34,6 +36,7 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
             _canvasUpdate();
 
             function _canvasUpdate() {
+                requestAnimationFrame(_canvasUpdate);
                 if(hiddenCanvas.current===null || hiddenVideo.current===null) 
                     return;
                 const back = getContext(hiddenCanvas.current)
@@ -42,13 +45,23 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
                 setImage(buffer)
                 if(output!==undefined)
                     output(buffer)
-                requestAnimationFrame(_canvasUpdate);
             };
         });
     }
 
+    const UnInit = ()=>{
+        if(hiddenVideo.current===null || stream===null)
+        {
+            setTimeout(UnInit,100)
+            return;
+        }
+        hiddenVideo.current.pause()
+        stream.getTracks().forEach(track => track.stop())
+    }
+
     useEffect(()=>{
         Init()
+        return UnInit
     },[])
 
     return (

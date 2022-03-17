@@ -3,13 +3,13 @@ import * as ImageInput from './unit/ImageInput'
 import * as CameraInput from './unit/CameraInput'
 import * as GrayScale from './unit/GrayScaleImage'
 import styled from 'styled-components'
-import * as wasm from '/workspace/wasm_component/pkg'
-import * as wasm_bg from '/workspace/wasm_component/pkg/index_bg.wasm'
+import * as wasm from '/workspace/pkg'
 import { SegmentIF,Segment,SegmentProc } from './unit/SegmentBase'
 
 const PipeLine = styled.ul`
     width:80%,
-    min-height:300px;
+    border-radius:10px;
+    min-height:400px;
     overflow-x: scroll;
     display: flex;
     background-color:#ccc;
@@ -17,12 +17,16 @@ const PipeLine = styled.ul`
     padding:10px;
 `
 
+const Item = styled.span`
+    
+`
+
+
 export const CreatePipeLine:React.FC = () => {
     const [steps,setStep] = useState<Segment[]>([])
     const [images,setImage] = useState<ImageData[]>([])
     const [update,setUpdate] = useState<number>(0)
     const renders:JSX.Element[] = []
-    const memory = wasm_bg.memory
 
     const SetInputComponent:(component:string)=>void = (component)=>{
         const nowStep=steps
@@ -81,7 +85,7 @@ export const CreatePipeLine:React.FC = () => {
             const element = steps[idx];
             if(element.method===null)
                 break;
-            img[idx] = await element.method(img[idx-1],wasm)
+            img[idx] = element.method(img[idx-1],wasm,element.options)
         }
         setImage([...img])
     }

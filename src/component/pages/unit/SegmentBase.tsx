@@ -8,7 +8,7 @@ type Props = {
     children?:ReactNode
 }
 
-export type SegmentProc = (input:ImageData,module?:typeof import("/workspace/wasm_component/pkg/index"),...options:any[])=>ImageData
+export type SegmentProc = (input:ImageData,module?:typeof import("/workspace/pkg"),...options:any[])=>ImageData
 
 export interface Segment {id:number,component:React.VFC<SegmentIF>,method:SegmentProc|null,options:any[]}
 
