@@ -48,27 +48,41 @@ export const CreatePipeLine:React.FC = () => {
 
     const AddComponent:(component:string)=>void = (component)=>{
         const nowStep=steps
-        const newID = nowStep[nowStep.length-1].id+1
-        switch (component) {
-            case 'grayscale':
-                nowStep.push({id:newID,component:GrayScale.Component,method:GrayScale.Process,options:[]})
-                break;
-            case 'camera':
-                nowStep.push({id:newID,component:CameraInput.Component,method:null,options:[]})
-                break;
-            case 'image':
-                nowStep.push({id:newID,component:ImageInput.Component,method:null,options:[]});
-                break;
-            default:
-                break;
+        if(steps.length == 0)
+        {
+            const newID = 0
+            switch (component) {
+                case 'camera':
+                    nowStep.push({id:newID,component:CameraInput.Component,method:null,options:[]})
+                    break;
+                case 'image':
+                    nowStep.push({id:newID,component:ImageInput.Component,method:null,options:[]});
+                    break;
+                default:
+                    break;
+            }
+            const memory = wasm_bg.memory
+            const size = 100*100*4;
+            const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(100,100,4),size)
+            setImage([...images,new ImageData(outbuffer,100)])
+            setUpdate([...update,0])
+            setStep(nowStep)
+        }else{
+            const newID = nowStep[nowStep.length-1].id+1
+            switch (component) {
+                case 'grayscale':
+                    nowStep.push({id:newID,component:GrayScale.Component,method:GrayScale.Process,options:[]})
+                    break;
+                default:
+                    break;
+            }
+            const memory = wasm_bg.memory
+            const size = images[nowStep[nowStep.length-1].id].width*images[nowStep[nowStep.length-1].id].height*4;
+            const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(images[nowStep[nowStep.length-1].id].width,images[nowStep[nowStep.length-1].id].height,4),size)
+            setImage([...images,new ImageData(outbuffer,images[nowStep[nowStep.length-1].id].width)])
+            setUpdate([...update,0])
+            setStep(nowStep)
         }
-        const memory = wasm_bg.memory
-        const size = images[nowStep[nowStep.length-1].id].width*images[nowStep[nowStep.length-1].id].height*4;
-
-        const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(images[nowStep[nowStep.length-1].id].width,images[nowStep[nowStep.length-1].id].height,4),size)
-        setImage([...images,new ImageData(outbuffer,images[nowStep[nowStep.length-1].id].width)])
-        setUpdate([...update,0])
-        setStep(nowStep)
     }
     return (
         <div>
