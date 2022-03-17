@@ -34,15 +34,16 @@ export const CreatePipeLine:React.FC = () => {
         }
         setImage([...img])
     }
-
-    let prev:Segment|undefined = undefined
-    const input = steps[0]
-    renders.push(<input.component output={UpdateImage.bind(null,0)} update={0}/>)
-    prev = input
-    for (let index = 1; index < steps.length; index++) {
-        const element = steps[index];
-        renders.push(<element.component output={UpdateImage.bind(null,index)} input={images[index]} update={update[index]}/>)
-        prev = element
+    if(steps.length > 0){
+        let prev:Segment|undefined = undefined
+        const input = steps[0]
+        renders.push(<input.component output={UpdateImage.bind(null,0)} update={0}/>)
+        prev = input
+        for (let index = 1; index < steps.length; index++) {
+            const element = steps[index];
+            renders.push(<element.component output={UpdateImage.bind(null,index)} input={images[index]} update={update[index]}/>)
+            prev = element
+        }
     }
 
     const AddComponent:(component:string)=>void = (component)=>{
