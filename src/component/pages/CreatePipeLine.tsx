@@ -20,7 +20,7 @@ const PipeLine = styled.ul`
 export const CreatePipeLine:React.FC = () => {
     const [steps,setStep] = useState<Segment[]>([])
     const [images,setImage] = useState<ImageData[]>([])
-    const [update,setUpdate] = useState<number[]>([])
+    const [update,setUpdate] = useState<number>(0)
     const renders:JSX.Element[] = []
 
     const AddComponent:(component:string)=>void = (component)=>{
@@ -42,7 +42,7 @@ export const CreatePipeLine:React.FC = () => {
             const size = 100*100*4;
             const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(100,100,4),size)
             setImage([...images,new ImageData(outbuffer,100)])
-            setUpdate([...update,0])
+            setUpdate(update+1)
             setStep(nowStep)
         }else{
             const newID = nowStep[nowStep.length-1].id+1
@@ -57,7 +57,7 @@ export const CreatePipeLine:React.FC = () => {
             const size = images[nowStep[nowStep.length-1].id].width*images[nowStep[nowStep.length-1].id].height*4;
             const outbuffer = new Uint8ClampedArray(memory.buffer,wasm.create_image_buffer(images[nowStep[nowStep.length-1].id].width,images[nowStep[nowStep.length-1].id].height,4),size)
             setImage([...images,new ImageData(outbuffer,images[nowStep[nowStep.length-1].id].width)])
-            setUpdate([...update,0])
+            setUpdate(update+1)
             setStep(nowStep)
         }
     }
@@ -76,11 +76,11 @@ export const CreatePipeLine:React.FC = () => {
         if(steps.length > 0){
             let prev:Segment|undefined = undefined
             const input = steps[0]
-            renders.push(<input.component output={UpdateImage.bind(null,0)} update={0}/>)
+            renders.push(<input.component output={UpdateImage.bind(null,0)}/>)
             prev = input
             for (let index = 1; index < steps.length; index++) {
                 const element = steps[index];
-                renders.push(<element.component output={UpdateImage.bind(null,index)} input={images[index]} update={update[index]}/>)
+                renders.push(<element.component output={UpdateImage.bind(null,index)} input={images[index]}/>)
                 prev = element
             }
         }

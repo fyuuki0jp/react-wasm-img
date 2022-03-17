@@ -15,7 +15,7 @@ export interface Segment {id:number,component:React.VFC<SegmentIF>,method:Segmen
 export interface SegmentIF {
     input?:ImageData|undefined,
     output?:(image:ImageData)=>void,
-    update:number
+    update?:number
 }
 
 const TitleStyle = styled.p`
