@@ -1,7 +1,5 @@
 import { SegmentBase,SegmentIF } from "./SegmentBase";
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
-import * as wasm from '/workspace/wasm_component/pkg'
-import * as wasm_bg from '/workspace/wasm_component/pkg/index_bg.wasm'
 
 export const Component:React.VFC<SegmentIF> = ({output})=>{
     const hiddenVideo = useRef<HTMLVideoElement>(null)
@@ -9,6 +7,8 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
     const [image,setImage] = useState<ImageData|undefined>(undefined)
     const [width,setWidth] = useState(640)
     const [height,setHeight] = useState(480)
+    const [play,setPlay] = useState(0)
+    const ref = useRef(0)
     const [stream,setStrream] = useState<MediaStream|null>(null)
     const getContext = (element:HTMLCanvasElement): CanvasRenderingContext2D => {
         const canvas: any = element;
@@ -32,23 +32,22 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
             hiddenCanvas.current.height = height
             hiddenVideo.current.srcObject = stream;
             console.log('open camera')
-            hiddenVideo.current.play()
-            _canvasUpdate();
-
-            function _canvasUpdate() {
-                requestAnimationFrame(_canvasUpdate);
-                if(hiddenCanvas.current===null || hiddenVideo.current===null) 
-                    return;
-                const back = getContext(hiddenCanvas.current)
-                back.drawImage(hiddenVideo.current, 0, 0, hiddenCanvas.current.width, hiddenCanvas.current.height);
-                const buffer = back.getImageData(0,0,hiddenCanvas.current.width,hiddenCanvas.current.height)
-                setImage(buffer)
-                if(output!==undefined)
-                    output(buffer)
-            };
+            hiddenVideo.current?.play()
+            setPlay(1)
         });
     }
-
+    function _canvasUpdate() {
+        if(play)
+            ref.current = requestAnimationFrame(_canvasUpdate);
+        if(hiddenCanvas.current===null || hiddenVideo.current===null) 
+            return;
+        const back = getContext(hiddenCanvas.current)
+        back.drawImage(hiddenVideo.current, 0, 0, hiddenCanvas.current.width, hiddenCanvas.current.height);
+        const buffer = back.getImageData(0,0,hiddenCanvas.current.width,hiddenCanvas.current.height)
+        setImage(buffer)
+        if(output!==undefined)
+            output(buffer)
+    };
     const UnInit = ()=>{
         if(hiddenVideo.current===null || stream===null)
         {
@@ -59,16 +58,37 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
         stream.getTracks().forEach(track => track.stop())
     }
 
+    const CameraControl=()=>{
+        if(play)
+        {
+            hiddenVideo.current?.pause()
+            setPlay(0)
+            cancelAnimationFrame(ref.current)
+        }
+        else
+        {
+            hiddenVideo.current?.play()
+            setPlay(1)
+        }
+    }
+
     useEffect(()=>{
         Init()
         return UnInit
     },[])
 
+    useEffect(()=>{
+        if(play==1)
+        {
+            _canvasUpdate();
+        }
+    },[play])
+
     return (
         <SegmentBase name={'カメラ入力'} image={image}>
             <canvas ref={hiddenCanvas} style={{'display':'none'}}></canvas>
             <video ref={hiddenVideo} style={{'display':'none'}}></video>
-            <button>{'カメラスタート'}</button>
+            <button onClick={CameraControl}>{play==0 ? '撮影開始':'撮影停止'}</button>
         </SegmentBase>
     )
 }

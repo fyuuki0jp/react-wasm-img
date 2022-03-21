@@ -20,7 +20,7 @@ export const ImageView:React.FC<Props> = ({image,width,height}) => {
         const dst = getContext(viewCanvas.current)
         hiddenCanvas.current.width=image.width
         hiddenCanvas.current.height=image.height
-        ctx.clearRect(0,0,hiddenCanvas.current.width,hiddenCanvas.current.height)
+        ctx.clearRect(0,0,parseInt(width),parseInt(height))
         ctx.putImageData(image,0,0)
         const aspect = image.height / image.width
         dst.drawImage(hiddenCanvas.current,0,0,image.width,image.height,0,0,parseInt(width),parseInt(height)*aspect)
