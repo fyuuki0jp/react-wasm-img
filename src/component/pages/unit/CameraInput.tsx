@@ -1,4 +1,5 @@
-import { SegmentBase,SegmentIF } from "./SegmentBase";
+import { SegmentBase } from "./SegmentBase";
+import {SegmentIF,SegmentProc} from "../../utils/types"
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 
 export const Component:React.VFC<SegmentIF> = ({output})=>{

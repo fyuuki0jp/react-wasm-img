@@ -1,4 +1,5 @@
-import { SegmentBase,SegmentIF } from "./SegmentBase";
+import { SegmentBase } from "./SegmentBase";
+import {SegmentIF,SegmentProc} from "../../utils/types"
 import React, { ChangeEvent, useRef, useState } from 'react'
 import {FileOpenButton} from '../../uiparts/AtomDesign'
 

@@ -4,8 +4,11 @@ import * as CameraInput from './unit/CameraInput'
 import * as GrayScale from './unit/GrayScaleImage'
 import * as Filter3x3 from './unit/FilterImage3x3'
 import styled from 'styled-components'
-import * as wasm from '/workspace/wasm_component/pkg'
-import { SegmentIF,Segment,SegmentProc } from './unit/SegmentBase'
+import { Segment} from '../utils/types'
+import WebpackWorker from 'worker-loader?inline=no-fallback!/workspace/src/Workers/pipeline.worker'
+
+
+let worker:WebpackWorker
 
 const PipeLine = styled.ul`
     margin-top:1%;
@@ -53,10 +56,10 @@ export const CreatePipeLine:React.FC = () => {
             const newID = 0
             switch (component) {
                 case 'camera':
-                    nowStep.push({name:'camera',id:newID,component:CameraInput.Component,method:null,options:[]})
+                    nowStep.push({name:'camera',id:newID,options:[]})
                     break;
                 case 'image':
-                    nowStep.push({name:'image',id:newID,component:ImageInput.Component,method:null,options:[]});
+                    nowStep.push({name:'image',id:newID,options:[]});
                     break;
                 default:
                     break;
@@ -68,10 +71,10 @@ export const CreatePipeLine:React.FC = () => {
         else{
             switch (component) {
                 case 'camera':
-                    nowStep[0] = {name:'camera',id:0,component:CameraInput.Component,method:null,options:[]}
+                    nowStep[0] = {name:'camera',id:0,options:[]}
                     break;
                 case 'image':
-                    nowStep[0] = {name:'image',id:0,component:ImageInput.Component,method:null,options:[]}
+                    nowStep[0] = {name:'image',id:0,options:[]}
                     break;
                 default:
                     break;
@@ -86,10 +89,10 @@ export const CreatePipeLine:React.FC = () => {
         const newID = nowStep[nowStep.length-1].id+1
         switch (component) {
             case 'grayscale':
-                nowStep.push({name:'grayscale',id:newID,component:GrayScale.Component,method:GrayScale.Process,options:[]})
+                nowStep.push({name:'grayscale',id:newID,options:[]})
                 break;
             case '3x3filter':
-                nowStep.push({name:'3x3filter',id:newID,component:Filter3x3.Component,method:Filter3x3.Process,options:[-1,-1,-1,-1,8,-1,-1,-1,-1]})
+                nowStep.push({name:'3x3filter',id:newID,options:[-1,-1,-1,-1,8,-1,-1,-1,-1]})
                 break;
                     default:
                 break;
@@ -98,16 +101,13 @@ export const CreatePipeLine:React.FC = () => {
         setStep(nowStep)
         UpdateImage(0,images[0])
     }
+
     const UpdateImage:(index:number,image:ImageData)=>void = async (index,image)=>{
-        let img = images
-        img[index] = image
-        for (let idx = index+1; idx < steps.length; idx++) {
-            const element = steps[idx];
-            if(element.method===null)
-                break;
-            img[idx] = element.method(img[idx-1],wasm,element.options)
+        worker.onmessage = (ev) =>{
+            console.log(ev)
+            setImage([...ev.data.images])
         }
-        setImage([...img])
+        worker.postMessage({images:images,image:image,steps:steps})
     }
     const UpdateOptions:(index:number,options:any[])=> void = async (index,options)=>{
         const nowSteps = steps
@@ -115,17 +115,32 @@ export const CreatePipeLine:React.FC = () => {
         setStep(nowSteps)
     }
 
-        if(steps.length > 0){
-            let prev:Segment|undefined = undefined
-            const input = steps[0]
-            renders.push(<input.component output={UpdateImage.bind(null,0)}/>)
-            prev = input
-            for (let index = 1; index < steps.length; index++) {
-                const element = steps[index];
-                renders.push(<element.component config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options}/>)
-                prev = element
-            }
+    useEffect(()=>{
+        worker = new WebpackWorker()
+        return ()=> worker.terminate()
+    },[])
+
+    if(steps.length > 0){
+        const input = steps[0]
+        for (let index = 0; index < steps.length; index++) {
+            const element = steps[index];
+            switch(element.name)
+            {
+                case 'camera':
+                    renders.push(<CameraInput.Component output={UpdateImage.bind(null,0)}/>)
+                    break;
+                case 'image':
+                    renders.push(<ImageInput.Component output={UpdateImage.bind(null,0)}/>)
+                    break;
+                case 'grayscale':
+                    renders.push(<GrayScale.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options}/>)
+                    break;
+                case '3x3filter':
+                    renders.push(<Filter3x3.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options}/>)
+                    break;
+                }
         }
+    }
 
     return (
         <div>

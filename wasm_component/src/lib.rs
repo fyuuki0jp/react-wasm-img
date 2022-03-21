@@ -1,10 +1,6 @@
 use wasm_bindgen::prelude::*;
 use web_sys::console::log_1;
 
-fn log(s: &String) {
-    log_1(&JsValue::from(s));
-}
-
 #[wasm_bindgen]
 pub fn gray_scale(width: u32, height: u32, raw_data: Vec<u8>) -> Vec<u8> {
     let mut out : Vec<u8> = raw_data.clone();

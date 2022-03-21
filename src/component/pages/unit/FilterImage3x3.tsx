@@ -1,16 +1,9 @@
-import { SegmentBase,SegmentIF,SegmentProc } from "./SegmentBase";
+import { SegmentBase } from "./SegmentBase";
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import {FileOpenButton} from '../../uiparts/AtomDesign'
 import styled from "styled-components";
+import {SegmentIF} from "../../utils/types"
 
-export const Process:SegmentProc = (input,module,options)=>{
-    if (module===undefined || input === undefined)
-        return input
-    let process:(width: number, height: number, raw_data: Uint8Array,filter_data:Int8Array)=> Uint8Array=module.filter3x3_image
-    const out = new ImageData(input.width,input.height)
-    out.data.set(process(input.width,input.height,new Uint8Array(input.data),new Int8Array(options)))
-    return out
-}
 
 const FilterInput = styled.input`
     width:60px;

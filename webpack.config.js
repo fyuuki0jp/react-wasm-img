@@ -34,6 +34,12 @@ module.exports = {
                 }],
             },
             {
+                test: /\.ts?$/,
+                use: [{
+                    loader: "ts-loader",
+                }],
+            },
+            {
                 test: /\.wasm$/,
                 type: "webassembly/async"
             }
