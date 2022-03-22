@@ -7,7 +7,7 @@ module.exports = {
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx", ".wasm"]
     },
-    mode: 'development',
+    mode: process.env.WEBPACK_ENV,
     output: {
         //  出力ファイルのディレクトリ名
         path: `${__dirname}/dist`,
