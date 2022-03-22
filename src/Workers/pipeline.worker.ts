@@ -1,48 +1,33 @@
 
 import {SegmentWorkerRequest,SegmentWorkerResponse} from '../component/utils/types'
+import {gray_scale,filter3x3_image} from '/workspace/wasm_component/pkg'
 
-
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const ctx: Worker = self as any
-let gray_scale = (width: number, height: number, raw_data: Uint8Array)=> {return raw_data};
-let filter3x3_image = (width: number, height: number, raw_data: Uint8Array,filter_data:Int8Array)=> {return raw_data};
-
-import('/workspace/wasm_component/pkg').then(obj=>{
-    gray_scale = obj.gray_scale
-    filter3x3_image = obj.filter3x3_image
-    console.log('load complete.')
-})
-
-const GrayScale = (input:ImageData)=>{
+const GrayScale:(input:ImageData)=>ImageData = (input)=>{
     const out = new ImageData(input.width,input.height)
-    out.data.set(gray_scale(input.width,input.height,new Uint8Array(input.data)))
+    const result = gray_scale(input.width,input.height,new Uint8Array(input.data))
+    out.data.set(result)
     return out
 }
 
-const Filter3x3 = (input:ImageData,options:any[])=>{
+const Filter3x3:(input:ImageData,options:number[])=>ImageData = (input,options)=>{
     const out = new ImageData(input.width,input.height)
     out.data.set(filter3x3_image(input.width,input.height,new Uint8Array(input.data),new Int8Array(options)))
     return out
 }
 
-
-ctx.onmessage = async (event:MessageEvent<SegmentWorkerRequest>) => {
-    console.log('recv event')
-    let img = event.data.images
-    img[0] = event.data.image
+onmessage = async (event) => {
+    let data:SegmentWorkerRequest = event.data
+    let img = data.image
     for (let idx = 1; idx < event.data.steps.length; idx++) {
-        const element = event.data.steps[idx];
+        const element = data.steps[idx];
         switch(element.name){
             case 'grayscale':
-                img[idx] = GrayScale(img[idx-1])
+                img = GrayScale(img)
                 break;
             case '3x3filter':
-                img[idx] = Filter3x3(img[idx-1],element.options)
+                img = Filter3x3(img,element.options)
         }
+        let response = {index:idx,image:img}
+        postMessage(response)
     }
-    let response = {images:img}
-    ctx.postMessage(response)
 }
-
-export default ctx

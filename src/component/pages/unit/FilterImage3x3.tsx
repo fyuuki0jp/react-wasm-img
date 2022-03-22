@@ -15,21 +15,6 @@ export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,
         useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null)
     ]
-
-    const table = []
-
-
-    for(let i=0;i<3;i++)
-    {
-        const row = []
-        for(let j=0;j<3;j++)
-        {
-            row.push(<td><FilterInput type='number' ref={filters[i*3+j]} defaultValue={options[i*3+j]}/></td>)
-        }
-        table.push(<tr>
-            {row}
-        </tr>)
-    }
     const UpdateFilter = ()=>{
         const option:number[] = []
         filters.forEach((ref)=>{
@@ -44,7 +29,21 @@ export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,
         <SegmentBase name={'3x3フィルター'} image={input}>
             <table>
                 <tbody>
-                    {table}
+                    <tr>
+                        <td><FilterInput type='number' ref={filters[0]} defaultValue={options[0]}/></td>
+                        <td><FilterInput type='number' ref={filters[1]} defaultValue={options[1]}/></td>
+                        <td><FilterInput type='number' ref={filters[2]} defaultValue={options[2]}/></td>
+                    </tr>
+                    <tr>
+                        <td><FilterInput type='number' ref={filters[3]} defaultValue={options[3]}/></td>
+                        <td><FilterInput type='number' ref={filters[4]} defaultValue={options[4]}/></td>
+                        <td><FilterInput type='number' ref={filters[5]} defaultValue={options[5]}/></td>
+                    </tr>
+                    <tr>
+                        <td><FilterInput type='number' ref={filters[6]} defaultValue={options[6]}/></td>
+                        <td><FilterInput type='number' ref={filters[7]} defaultValue={options[7]}/></td>
+                        <td><FilterInput type='number' ref={filters[8]} defaultValue={options[8]}/></td>
+                    </tr>
                 </tbody>
             </table>
             <button onClick={UpdateFilter}>フィルター更新</button>

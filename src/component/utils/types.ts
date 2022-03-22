@@ -14,10 +14,10 @@ export interface SegmentIF {
 
 export interface SegmentWorkerRequest {
     image:ImageData,
-    images:ImageData[],
-    steps:Segment[]
+    steps:Segment[],
 }
 
 export interface SegmentWorkerResponse {
-    images:ImageData[]
-}
+    image:ImageData,
+    index:number
+s}

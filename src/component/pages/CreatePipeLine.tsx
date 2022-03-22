@@ -1,14 +1,11 @@
-import React,{Component, useEffect, useState} from 'react'
+import React,{Component, useEffect, useState,useRef} from 'react'
 import * as ImageInput from './unit/ImageInput'
 import * as CameraInput from './unit/CameraInput'
 import * as GrayScale from './unit/GrayScaleImage'
 import * as Filter3x3 from './unit/FilterImage3x3'
 import styled from 'styled-components'
-import { Segment} from '../utils/types'
-import WebpackWorker from 'worker-loader?inline=no-fallback!/workspace/src/Workers/pipeline.worker'
+import { Segment, SegmentWorkerResponse} from '../utils/types'
 
-
-let worker:WebpackWorker
 
 const PipeLine = styled.ul`
     margin-top:1%;
@@ -42,13 +39,14 @@ const Item = styled.span`
     -webkit-user-select: none; /* Safari、Chromeなど */
 `
 
+const worker = new Worker(new URL('/workspace/src/Workers/pipeline.worker.ts',import.meta.url))
 
 export const CreatePipeLine:React.FC = () => {
     const [steps,setStep] = useState<Segment[]>([])
     const [images,setImage] = useState<ImageData[]>([])
     const [update,setUpdate] = useState<number>(0)
+    const [proc,setProc] = useState<number>(0)
     const renders:JSX.Element[] = []
-
     const SetInputComponent:(component:string)=>void = (component)=>{
         const nowStep=steps
         if(steps.length == 0)
@@ -103,21 +101,19 @@ export const CreatePipeLine:React.FC = () => {
     }
 
     const UpdateImage:(index:number,image:ImageData)=>void = async (index,image)=>{
-        worker.onmessage = (ev) =>{
-            console.log(ev)
-            setImage([...ev.data.images])
+        worker.onmessage = (ev:MessageEvent<SegmentWorkerResponse>) =>{
+            const copy_images = images.slice()
+            copy_images[ev.data.index] = ev.data.image
+            setImage(copy_images)
         }
-        worker.postMessage({images:images,image:image,steps:steps})
+        worker?.postMessage({image:image,steps:steps})
     }
     const UpdateOptions:(index:number,options:any[])=> void = async (index,options)=>{
         const nowSteps = steps
         nowSteps[index].options = options
         setStep(nowSteps)
     }
-
     useEffect(()=>{
-        worker = new WebpackWorker()
-        return ()=> worker.terminate()
     },[])
 
     if(steps.length > 0){

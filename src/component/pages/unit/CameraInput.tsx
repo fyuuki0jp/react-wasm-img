@@ -38,8 +38,6 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
         });
     }
     function _canvasUpdate() {
-        if(play)
-            ref.current = requestAnimationFrame(_canvasUpdate);
         if(hiddenCanvas.current===null || hiddenVideo.current===null) 
             return;
         const back = getContext(hiddenCanvas.current)
@@ -48,6 +46,8 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
         setImage(buffer)
         if(output!==undefined)
             output(buffer)
+        if(play)
+            ref.current = requestAnimationFrame(_canvasUpdate);
     };
     const UnInit = ()=>{
         if(hiddenVideo.current===null || stream===null)
