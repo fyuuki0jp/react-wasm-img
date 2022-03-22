@@ -47,7 +47,7 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
         if(output!==undefined)
             output(buffer)
         if(play)
-            ref.current = requestAnimationFrame(_canvasUpdate);
+            setTimeout(_canvasUpdate,100)
     };
     const UnInit = ()=>{
         if(hiddenVideo.current===null || stream===null)
@@ -64,12 +64,14 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
         {
             hiddenVideo.current?.pause()
             setPlay(0)
-            cancelAnimationFrame(ref.current)
+            
+//            cancelAnimationFrame(ref.current)
         }
         else
         {
             hiddenVideo.current?.play()
             setPlay(1)
+            setTimeout(_canvasUpdate,100)
         }
     }
 
