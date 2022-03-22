@@ -1,5 +1,6 @@
 
 import {SegmentWorkerRequest,SegmentWorkerResponse} from '../component/utils/types'
+//@ts-ignore
 import {gray_scale,filter3x3_image} from '/workspace/wasm_component/pkg'
 
 const GrayScale:(input:ImageData)=>ImageData = (input)=>{
