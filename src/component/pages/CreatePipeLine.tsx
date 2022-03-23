@@ -90,7 +90,7 @@ export const CreatePipeLine:React.FC = () => {
                 nowStep.push({name:'grayscale',id:newID,options:[]})
                 break;
             case '3x3filter':
-                nowStep.push({name:'3x3filter',id:newID,options:[-1,-1,-1,-1,8,-1,-1,-1,-1]})
+                nowStep.push({name:'3x3filter',id:newID,options:[-1,-1,-1,-1,8,-1,-1,-1,-1,0]})
                 break;
                     default:
                 break;

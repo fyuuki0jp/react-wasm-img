@@ -1,6 +1,5 @@
 use wasm_bindgen::prelude::*;
-use web_sys::console::log_1;
-
+use std::cmp;
 
 #[wasm_bindgen]
 pub fn gray_scale(width: u32, height: u32, raw_data: Vec<u8>) -> Vec<u8> {
@@ -35,25 +34,22 @@ pub fn filter3x3_image(input_color:u32,width:u32,height:u32,raw_data:Vec<u8>,fil
                 for i in 0..3 {
                     let px = (offset as i32+addrs[j as usize]+i*4-4) as u32 as usize;
 //                    log(&format!("addr {}", px));
+                    r += raw_data[px] as f32* filter_data[(filter+i) as usize] as f32;
                     if input_color==0 {
-                        r += raw_data[px] as f32* filter_data[(filter+i) as usize] as f32;
                         g += raw_data[px+1] as f32* filter_data[(filter+i) as usize] as f32;
                         b += raw_data[px+2] as f32* filter_data[(filter+i) as usize] as f32;
                     }
-                    else if input_color==1 {
-                        r += raw_data[px] as f32* filter_data[(filter+i) as usize] as f32;
-                    }
                 }
             }
-            out[offset] = r as u8;
+            out[offset] = cmp::max(0,cmp::min(255,(r+ filter_data[9]as f32) as u8));
             if input_color==0 {
-                out[offset+1] = g as u8;
-                out[offset+2] = b as u8;
+                out[offset+1] = cmp::max(0,cmp::min(255,(g+ filter_data[9]as f32) as u8));
+                out[offset+2] = cmp::max(0,cmp::min(255,(b+ filter_data[9]as f32) as u8));
             }
             else
             {
-                out[offset+1] = r as u8;
-                out[offset+2] = r as u8;
+                out[offset+1] = out[offset];
+                out[offset+2] = out[offset];
             }
 
         }

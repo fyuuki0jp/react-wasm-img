@@ -9,11 +9,12 @@ const FilterInput = styled.input`
     width:60px;
 `
 
-export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,1,1,1,1]})=>{
+export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,1,1,1,1,0]})=>{
     const filters = [
         useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),
-        useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null)
+        useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),
+        useRef<HTMLInputElement>(null)
     ]
     const UpdateFilter = ()=>{
         const option:number[] = []
@@ -27,6 +28,7 @@ export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,
     }
     return (
         <SegmentBase name={'3x3フィルター'} image={input}>
+            フィルタカーネル<br/>
             <table>
                 <tbody>
                     <tr>
@@ -46,6 +48,7 @@ export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,
                     </tr>
                 </tbody>
             </table>
+            フィルタオフセット：<FilterInput type='number' ref={filters[9]} defaultValue={options[9]}/>
             <button onClick={UpdateFilter}>フィルター更新</button>
         </SegmentBase>
     )
