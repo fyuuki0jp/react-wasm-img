@@ -1,4 +1,5 @@
 const path = require("path");
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 const createStyledComponentsTransformer = require('typescript-styled-components-plugin').default;
@@ -54,6 +55,7 @@ module.exports = {
         asyncWebAssembly: true,
     },
     plugins: [
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "src/index.html")
         }),
