@@ -33,7 +33,7 @@
   },
   "scripts": {
     "deploy": "git subtree push --prefix dist/ origin gh-pages",
-    "start": "yarn webpack serve --config webpack.config.js",
+    "start": "WEBPACK_ENV=development yarn webpack serve --config webpack.config.js",
     "build-dev": "WEBPACK_ENV=development yarn webpack build",
     "build-prod": "WEBPACK_ENV=production yarn webpack build"
   }
