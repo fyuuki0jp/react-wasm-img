@@ -2,7 +2,7 @@ import { SegmentBase } from "./SegmentBase";
 import {SegmentIF,SegmentProc} from "../../utils/types"
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 
-export const Component:React.VFC<SegmentIF> = ({output})=>{
+export const Component:React.VFC<SegmentIF> = ({del,output})=>{
     const hiddenVideo = useRef<HTMLVideoElement>(null)
     const hiddenCanvas = useRef<HTMLCanvasElement>(null)
     const [image,setImage] = useState<ImageData|undefined>(undefined)
@@ -88,7 +88,7 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
     },[play])
 
     return (
-        <SegmentBase name={'カメラ入力'} image={image}>
+        <SegmentBase name={'カメラ入力'} image={image} del={del}>
             <canvas ref={hiddenCanvas} style={{'display':'none'}}></canvas>
             <video ref={hiddenVideo} style={{'display':'none'}}></video>
             <button onClick={CameraControl}>{play==0 ? '撮影開始':'撮影停止'}</button>

@@ -6,6 +6,11 @@ interface FileOpen {
     children?:React.ReactNode
 };
 
+interface Submit {
+    onClick:()=>void,
+    children?:React.ReactNode
+}
+
 const Button = styled.div`
     border: 2px solid #42b0bd;
     border-radius:2px;
@@ -26,5 +31,11 @@ export const FileOpenButton:React.VFC<FileOpen> = ({update,children}) =>{
             <Button>{children ? children : 'ファイルを開く'}</Button>
             <input type='file' onChange={update} style={{'display':'none'}}></input>
         </label>
+    )
+}
+
+export const SubmitButton:React.VFC<Submit> = ({onClick,children})=>{
+    return (
+        <Button>{children ? children : 'クリック'}</Button>
     )
 }

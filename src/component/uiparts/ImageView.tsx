@@ -1,10 +1,16 @@
 import React, { useEffect,useState,useRef } from 'react'
+import styled from 'styled-components'
 
 type Props = {
     image:ImageData|undefined,
     width:string,
     height:string
 }
+
+const ViewRect = styled.div`
+    border: 1px solid #ccc;
+    padding:5px;
+`
 
 export const ImageView:React.FC<Props> = ({image,width,height}) => {
     const hiddenCanvas = useRef<HTMLCanvasElement>(null)
@@ -26,9 +32,9 @@ export const ImageView:React.FC<Props> = ({image,width,height}) => {
         dst.drawImage(hiddenCanvas.current,0,0,image.width,image.height,0,0,parseInt(width),parseInt(height)*aspect)
     })
     return (
-        <>
+        <ViewRect>
             <canvas ref={viewCanvas} width={width} height={height} ></canvas>
             <canvas ref={hiddenCanvas} style={{'display':'none'}} ></canvas>
-        </>
+        </ViewRect>
     )
 }

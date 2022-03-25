@@ -9,13 +9,13 @@ import { Segment, SegmentWorkerResponse} from '../utils/types'
 
 const PipeLine = styled.ul`
     margin-top:1%;
-    width:100%;
+    width:450px;
     border-radius:10px;
     min-height:400px;
     overflow-x: scroll;
     background-color:#ccc;
     list-style: none;
-    padding:10px;
+    padding:25px;
 `
 
 const ItemList = styled.div`
@@ -49,15 +49,15 @@ export const CreatePipeLine:React.FC = () => {
     const renders:JSX.Element[] = []
     const SetInputComponent:(component:string)=>void = (component)=>{
         const nowStep=steps
-        if(steps.length == 0)
+        if(steps.length == 0 || (steps[0].name!='camera' && steps[0].name!='image'))
         {
             const newID = 0
             switch (component) {
                 case 'camera':
-                    nowStep.push({name:'camera',id:newID,options:[]})
+                    nowStep.unshift({name:'camera',id:newID,options:[]})
                     break;
                 case 'image':
-                    nowStep.push({name:'image',id:newID,options:[]});
+                    nowStep.unshift({name:'image',id:newID,options:[]});
                     break;
                 default:
                     break;
@@ -108,6 +108,13 @@ export const CreatePipeLine:React.FC = () => {
         }
         worker?.postMessage({image:image,steps:steps})
     }
+
+    const DeleteComponent:(index)=>void = (index)=>{
+        const nowStep = steps;
+        nowStep.splice(index,1)
+        setStep([...nowStep])
+    }
+
     const UpdateOptions:(index:number,options:any[])=> void = async (index,options)=>{
         const nowSteps = steps
         nowSteps[index].options = options
@@ -123,16 +130,16 @@ export const CreatePipeLine:React.FC = () => {
             switch(element.name)
             {
                 case 'camera':
-                    renders.push(<CameraInput.Component output={UpdateImage.bind(null,0)}/>)
+                    renders.push(<CameraInput.Component output={UpdateImage.bind(null,0)} del={DeleteComponent.bind(null,0)}/>)
                     break;
                 case 'image':
-                    renders.push(<ImageInput.Component output={UpdateImage.bind(null,0)}/>)
+                    renders.push(<ImageInput.Component output={UpdateImage.bind(null,0)} del={DeleteComponent.bind(null,0)}/>)
                     break;
                 case 'grayscale':
-                    renders.push(<GrayScale.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options}/>)
+                    renders.push(<GrayScale.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options} del={DeleteComponent.bind(null,index)}/>)
                     break;
                 case '3x3filter':
-                    renders.push(<Filter3x3.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options}/>)
+                    renders.push(<Filter3x3.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options} del={DeleteComponent.bind(null,index)}/>)
                     break;
                 }
         }

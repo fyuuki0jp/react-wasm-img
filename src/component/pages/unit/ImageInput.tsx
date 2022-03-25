@@ -3,7 +3,7 @@ import {SegmentIF,SegmentProc} from "../../utils/types"
 import React, { ChangeEvent, useRef, useState } from 'react'
 import {FileOpenButton} from '../../uiparts/AtomDesign'
 
-export const Component:React.VFC<SegmentIF> = ({output})=>{
+export const Component:React.VFC<SegmentIF> = ({del,output})=>{
     const hiddenCanvas = useRef<HTMLCanvasElement>(null)
     const [image,setImage] = useState<ImageData|undefined>(undefined)
     const getContext = (element:HTMLCanvasElement): CanvasRenderingContext2D => {
@@ -33,7 +33,7 @@ export const Component:React.VFC<SegmentIF> = ({output})=>{
         img.src = dataURL
     }
     return (
-        <SegmentBase name={'画像入力'} image={image}>
+        <SegmentBase name={'画像入力'} image={image} del={del}>
             <canvas ref={hiddenCanvas} style={{'display':'none'}}></canvas>
             <FileOpenButton update={UpdatePath}>入力画像を指定する</FileOpenButton>
         </SegmentBase>

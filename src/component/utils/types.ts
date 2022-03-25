@@ -9,6 +9,7 @@ export interface SegmentIF {
     output?:(image:ImageData)=>void,
     config?:(options:any[])=>void,
     options?:any[],
+    del:()=>void,
     update?:number
 }
 

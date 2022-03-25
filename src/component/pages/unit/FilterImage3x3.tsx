@@ -1,6 +1,6 @@
 import { SegmentBase } from "./SegmentBase";
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import {FileOpenButton} from '../../uiparts/AtomDesign'
+import {SubmitButton} from '../../uiparts/AtomDesign'
 import styled from "styled-components";
 import {SegmentIF} from "../../utils/types"
 
@@ -9,7 +9,7 @@ const FilterInput = styled.input`
     width:60px;
 `
 
-export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,1,1,1,1,0]})=>{
+export const Component:React.VFC<SegmentIF> = ({input,del,config,options=[1,1,1,1,1,1,1,1,1,0]})=>{
     const filters = [
         useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),useRef<HTMLInputElement>(null),
@@ -27,8 +27,8 @@ export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,
             config(option)
     }
     return (
-        <SegmentBase name={'3x3フィルター'} image={input}>
-            フィルタカーネル<br/>
+        <SegmentBase name={'3x3フィルター'} image={input} del={del}>
+            カーネル<br/>
             <table>
                 <tbody>
                     <tr>
@@ -48,8 +48,9 @@ export const Component:React.VFC<SegmentIF> = ({input,config,options=[1,1,1,1,1,
                     </tr>
                 </tbody>
             </table>
-            フィルタオフセット：<FilterInput type='number' ref={filters[9]} defaultValue={options[9]}/>
-            <button onClick={UpdateFilter}>フィルター更新</button>
+            オフセット:<FilterInput type='number' ref={filters[9]} defaultValue={options[9]}/>
+            <br/>
+            <SubmitButton onClick={UpdateFilter}>フィルター更新</SubmitButton>
         </SegmentBase>
     )
 }
