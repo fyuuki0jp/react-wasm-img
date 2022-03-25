@@ -22,6 +22,15 @@ pub fn filter3x3_image(input_color:u32,width:u32,height:u32,raw_data:Vec<u8>,fil
     let mut out : Vec<u8> = raw_data.clone();
     let width_length = width*4;
     let addrs:[i32;3] = [width_length as i32 *-1,0,width_length as i32];
+    let mut total:f32 = 0.0;
+    let mut div:f32 = 1.0;
+    for f in 0..9 {
+        total += filter_data[f] as f32;
+    }
+    if total > 1.0 {
+        div = total;
+    }
+
     for y in 1..(height-1) {
         let addr = (y*width_length) as usize;
         for x in 1..(width-1) {
@@ -41,10 +50,10 @@ pub fn filter3x3_image(input_color:u32,width:u32,height:u32,raw_data:Vec<u8>,fil
                     }
                 }
             }
-            out[offset] = cmp::max(0,cmp::min(255,(r+ filter_data[9]as f32) as u8));
+            out[offset] = cmp::max(0,cmp::min(255,((r+ filter_data[9]as f32) / div) as u32)) as u8;
             if input_color==0 {
-                out[offset+1] = cmp::max(0,cmp::min(255,(g+ filter_data[9]as f32) as u8));
-                out[offset+2] = cmp::max(0,cmp::min(255,(b+ filter_data[9]as f32) as u8));
+                out[offset+1] = cmp::max(0,cmp::min(255,((g+ filter_data[9]as f32) / div) as u32)) as u8;
+                out[offset+2] = cmp::max(0,cmp::min(255,((b+ filter_data[9]as f32) / div) as u32)) as u8;
             }
             else
             {

@@ -10,17 +10,19 @@ import { Segment, SegmentWorkerResponse} from '../utils/types'
 const PipeLine = styled.ul`
     margin-top:1%;
     width:450px;
+    height:80vh;
+    overflow-y:scroll;
     border-radius:10px;
-    min-height:400px;
-    overflow-x: scroll;
     background-color:#ccc;
     list-style: none;
     padding:25px;
 `
 
 const ItemList = styled.div`
-    width:100%;
-    height:20%;
+    display:flex;
+    width:450px;
+    overflow-x:scroll;
+    height:50px;
 `
 
 const Item = styled.span`
@@ -41,6 +43,7 @@ const Item = styled.span`
 
 const worker = new Worker(new URL('/workspace/src/Workers/pipeline.worker.ts',import.meta.url))
 
+
 export const CreatePipeLine:React.FC = () => {
     const [steps,setStep] = useState<Segment[]>([])
     const [images,setImage] = useState<ImageData[]>([])
@@ -51,32 +54,13 @@ export const CreatePipeLine:React.FC = () => {
         const nowStep=steps
         if(steps.length == 0 || (steps[0].name!='camera' && steps[0].name!='image'))
         {
-            const newID = 0
-            switch (component) {
-                case 'camera':
-                    nowStep.unshift({name:'camera',id:newID,options:[]})
-                    break;
-                case 'image':
-                    nowStep.unshift({name:'image',id:newID,options:[]});
-                    break;
-                default:
-                    break;
-            }
+            nowStep.unshift({name:component,id:0,options:[]})
             setImage([...images,new ImageData(100,100)])
             setUpdate(update+1)
             setStep(nowStep)
         }
         else{
-            switch (component) {
-                case 'camera':
-                    nowStep[0] = {name:'camera',id:0,options:[]}
-                    break;
-                case 'image':
-                    nowStep[0] = {name:'image',id:0,options:[]}
-                    break;
-                default:
-                    break;
-            }
+            nowStep[0] = {name:component,id:0,options:[]}
             setUpdate(update+1)
             setStep(nowStep)
         }
@@ -120,8 +104,6 @@ export const CreatePipeLine:React.FC = () => {
         nowSteps[index].options = options
         setStep(nowSteps)
     }
-    useEffect(()=>{
-    },[])
 
     if(steps.length > 0){
         const input = steps[0]
@@ -141,7 +123,7 @@ export const CreatePipeLine:React.FC = () => {
                 case '3x3filter':
                     renders.push(<Filter3x3.Component  config={UpdateOptions.bind(null,index)} input={images[index]} options={element.options} del={DeleteComponent.bind(null,index)}/>)
                     break;
-                }
+            }
         }
     }
 

@@ -11,7 +11,7 @@ interface Submit {
     children?:React.ReactNode
 }
 
-const Button = styled.div`
+const Button = styled.p`
     border: 2px solid #42b0bd;
     border-radius:2px;
     margin:1rem;
@@ -36,6 +36,6 @@ export const FileOpenButton:React.VFC<FileOpen> = ({update,children}) =>{
 
 export const SubmitButton:React.VFC<Submit> = ({onClick,children})=>{
     return (
-        <Button>{children ? children : 'クリック'}</Button>
+        <Button onClick={onClick}>{children ? children : 'クリック'}</Button>
     )
 }
