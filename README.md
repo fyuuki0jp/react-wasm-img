@@ -6,6 +6,17 @@ reactとstyledcomponentsを用いて画面をレンダリングしている。
 # demo URL
 https://fyuuki0jp.github.io/react-wasm-img/
 
+# 開発手順
+1. 当リポジトリをクローンする
+2. クローンしたディレクトリをVSCodeのDevContainerで開く
+3. 開き終わったらターミナルで下記を実行する
+```
+cd wasm_component
+wasm-pack build
+yarn
+```
+
+
 # ビルド手順
 ## development
 ```
