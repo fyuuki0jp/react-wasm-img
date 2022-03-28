@@ -15,7 +15,7 @@ cd wasm_component
 wasm-pack build
 yarn
 ```
-
+4. あとはコード編集をしていける。
 
 # ビルド手順
 ## development
